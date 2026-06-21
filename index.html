@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>𝕮𝖑𝖆-𝕲𝖚𝖓𝖐𝖔𝖐𝖚 | クラ軍国 公式</title>
+    <style>
+        /* 全体のリセットとベース設定 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #0a0512;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ローディング画面 */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #05020a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-glow {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #bc13fe;
+            text-shadow: 0 0 10px #bc13fe, 0 0 20px #bc13fe;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.4; text-shadow: 0 0 10px #bc13fe; }
+            to { opacity: 1; text-shadow: 0 0 20px #bc13fe, 0 0 40px #bc13fe; }
+        }
+
+        /* パーティクル背景用のキャンバス */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 共通：ガラスUIデザイン */
+        .glass-card {
+            background: rgba(18, 10, 30, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(188, 19, 254, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37),
+                        0 0 20px rgba(188, 19, 254, 0.1);
+        }
+
+        /* セクション設定 */
+        section {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 80px 20px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 50px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(188, 19, 254, 0.6);
+        }
+
+        /* --- 🌌 トップページセクション --- */
+        #hero .glass-card {
+            padding: 50px 40px;
+            max-width: 800px;
+            text-align: center;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards 0.5s;
+        }
+
+        @keyframes fadeInUp { to { transform: translateY(0); opacity: 1; } }
+
+        .logo-text {
+            font-size: 4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(45deg, #ff00ff, #7000ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(188, 19, 254, 0.6));
+            margin-bottom: 10px;
+        }
+
+        .subtitle { font-size: 1.2rem; color: #a29bfe; letter-spacing: 2px; margin-bottom: 30px; }
+        .slogan { font-size: 1.5rem; font-weight: bold; color: #fff; letter-spacing: 5px; margin: 20px 0; text-shadow: 0 0 8px rgba(255, 255, 255, 0.6); }
+        .description { color: #b2bec3; line-height: 1.8; margin-bottom: 40px; }
+
+        .btn-group { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; }
+        .btn { display: inline-block; padding: 15px 35px; border-radius: 50px; font-weight: bold; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; }
+        .btn-discord { background: #5865F2; color: white; box-shadow: 0 4px 15px rgba(88, 101, 242, 0.4); }
+        .btn-discord:hover { background: #4752c4; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(88, 101, 242, 0.6); }
+        .btn-bot { background: transparent; color: #bc13fe; border: 2px solid #bc13fe; box-shadow: 0 4px 15px rgba(188, 19, 254, 0.2); }
+        .btn-bot:hover { background: #bc13fe; color: white; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(188, 19, 254, 0.6); }
+        .scroll-down { color: #a29bfe; text-decoration: none; font-size: 0.9rem; letter-spacing: 2px; animation: bounce 2s infinite; margin-top: 20px; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+
+        /* --- 👑 幹部一覧セクション --- */
+        .member-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1200px; width: 100%; padding: 0 20px; }
+        .member-card { padding: 40px 30px; text-align: center; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; cursor: pointer; }
+        .member-card:hover { transform: translateY(-10px) scale(1.03); border-color: rgba(188, 19, 254, 0.8); box-shadow: 0 15px 45px rgba(188, 19, 254, 0.3), 0 0 30px rgba(188, 19, 254, 0.2); }
+        .member-avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #120a1e, #3a1c5c); margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; border: 2px solid rgba(188, 19, 254, 0.4); box-shadow: 0 0 15px rgba(188, 19, 254, 0.2); transition: all 0.3s ease; }
+        .member-card:hover .member-avatar { border-color: #bc13fe; box-shadow: 0 0 25px #bc13fe; transform: rotate(10deg); }
+        .member-name { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; color: #fff; text-shadow: 0 0 5px rgba(255, 255, 255, 0.2); }
+        .role-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+        .role-admin { background: rgba(255, 215, 0, 0.1); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.4); text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); }
+        .card-admin { border: 1px solid rgba(255, 215, 0, 0.3) !important; }
+        .card-admin:hover { border-color: #ffd700 !important; box-shadow: 0 15px 45px rgba(255, 215, 0, 0.2), 0 0 30px rgba(255, 215, 0, 0.1) !important; }
+        .role-elder { background: rgba(188, 19, 254, 0.15); color: #e066ff; border: 1px solid rgba(188, 19, 254, 0.4); text-shadow: 0 0 8px rgba(188, 19, 254, 0.6); }
+        .role-captain { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid rgba(0, 255, 204, 0.4); text-shadow: 0 0 8px rgba(0, 255, 204, 0.6); }
+
+        /* --- 📢 お知らせセクション --- */
+        .news-container {
+            max-width: 900px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .news-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(188, 19, 254, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-item:hover {
+            background: rgba(188, 19, 254, 0.05);
+            padding-left: 10px;
+        }
+
+        .news-meta {
+            min-width: 140px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .news-date {
+            color: #a29bfe;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .news-tag {
+            display: inline-block;
+            align-self: flex-start;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* タグごとの色 */
+        .tag-update { background: rgba(0, 255, 204, 0.1); color: #00ffcc; border: 1px solid rgba(0, 255, 204, 0.3); }
+        .tag-event { background: rgba(255, 0, 128, 0.1); color: #ff0080; border: 1px solid rgba(255, 0, 128, 0.3); }
+        .tag-maintenance { background: rgba(255, 165, 0, 0.1); color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.3); }
+
+        .news-content {
+            flex-grow: 1;
+            color: #e2e2e2;
+            line-height: 1.6;
+        }
+
+        .news-content h4 {
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div class="loader-glow">𝕮𝖑𝖆-𝕲𝖚𝖓𝖐𝖔𝖐𝖚...</div></div>
+
+    <canvas id="particles-js"></canvas>
+
+    <section id="hero">
+        <div class="glass-card">
+            <div class="logo-text">𝕮𝖑𝖆-𝕲𝖚𝖓𝖐𝖔𝖐𝖚</div>
+            <div class="subtitle">クラ軍国 公式ポータルサイト</div>
+            <div class="slogan">WE BUILD. WE DEFEND. WE CONQUER.</div>
+            <p class="description">
+                ここは「クラ軍国」の統治する至高の領域。強固なコミュニティ、独自のシステム、<br>
+                そして最強の仲間たちが集う場所。秩序を築き、領土を守り、すべてを征服せよ。
+            </p>
+            <div class="btn-group">
+                <a href="https://discord.gg/KW9fTH9F" target="_blank" class="btn btn-discord">Discordに参加する</a>
+                <a href="https://discord.com/oauth2/authorize?client_id=1517816126208479233" target="_blank" class="btn btn-bot">公式Botを導入</a>
+            </div>
+            <div><a href="#members" class="scroll-down">▼ 幹部・メンバー一覧を見る</a></div>
+        </div>
+    </section>
+
+    <section id="members">
+        <h2 class="section-title">👑 クラ軍国 幹部一覧</h2>
+        <div class="member-grid">
+            <div class="glass-card member-card card-admin">
+                <div class="member-avatar">👑</div><div class="member-name">クラスティック</div><span class="role-badge role-admin">管理人</span>
+            </div>
+            <div class="glass-card member-card card-admin">
+                <div class="member-avatar">🌍</div><div class="member-name">世界を平和にするりょうすけ</div><span class="role-badge role-admin">管理人</span>
+            </div>
+            <div class="glass-card member-card">
+                <div class="member-avatar">⚡</div><div class="member-name">ヒカ</div><span class="role-badge role-elder">幹部</span>
+            </div>
+            <div class="glass-card member-card">
+                <div class="member-avatar">🇧🇷</div><div class="member-name">brasil_aa</div><span class="role-badge role-elder">幹部</span>
+            </div>
+            <div class="glass-card member-card">
+                <div class="member-avatar">🥒</div><div class="member-name">きゅうり</div><span class="role-badge role-captain">クラ軍国第1番長</span>
+            </div>
+        </div>
+        <div style="margin-top: 50px;"><a href="#news" class="scroll-down">▼ 📢 最新のお知らせを見る</a></div>
+    </section>
+
+    <section id="news">
+        <h2 class="section-title">📢 INFORMATION</h2>
+        
+        <div class="glass-card news-container" id="news-box">
+            <div class="news-item">
+                <div class="news-meta">
+                    <span class="news-date">2026.06.21</span>
+                    <span class="news-tag tag-update">アップデート</span>
+                </div>
+                <div class="news-content">
+                    <h4>公式サイトがアップデートされました</h4>
+                    <p>クラ軍国公式ポータルサイトに「幹部一覧」と「お知らせ欄」が実装されました。今後の情報をお見逃しなく！</p>
+                </div>
+            </div>
+
+            <div class="news-item">
+                <div class="news-meta">
+                    <span class="news-date">2026.06.20</span>
+                    <span class="news-tag tag-event">イベント</span>
+                </div>
+                <div class="news-content">
+                    <h4>近日、大規模軍事演習（イベント）開催予定</h4>
+                    <p>サーバー内メンバー全員が参加可能なイベントを企画中です。詳細はDiscordにて告知します。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // ローディング画面の解除
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 500);
+            }, 1000);
+        });
+
+        // 簡易パーティクル背景の実装
+        const canvas = document.getElementById('particles-js');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 60;
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * -0.5 - 0.1;
+                this.color = `rgba(188, 19, 254, ${Math.random() * 0.5 + 0.2})`;
+            }
+            update() { this.x += this.speedX; this.y += this.speedY; if (this.y < 0) { this.y = canvas.height; this.x = Math.random() * canvas.width; } }
+            draw() { ctx.fillStyle = this.color; ctx.shadowBlur = 10; ctx.shadowColor = '#bc13fe'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+        }
+        function init() { for (let i = 0; i < particleCount; i++) { particles.push(new Particle()); } }
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.shadowBlur = 0; particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); }
+        init(); animate();
+    </script>
+</body>
+</html>
